@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#174d38">
+<title>PQA/CPR Assistant HTI</title>
+<link rel="manifest" href="manifest.json">
+<style>
+:root{--green:#174d38;--green2:#23734f;--mint:#e8f4ed;--bg:#f4f7f5;--ink:#17231d;--muted:#68756d;--line:#dce5df;--red:#a52c2c;--amber:#9b6500;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:linear-gradient(130deg,#123b2b,var(--green2));color:white;padding:20px 16px 18px;position:sticky;top:0;z-index:4;box-shadow:0 2px 12px #0c2c1c22}
+.headrow{max-width:1100px;margin:auto;display:flex;gap:12px;align-items:center;justify-content:space-between}.brand{font-size:20px;font-weight:800;letter-spacing:.2px}.sub{font-size:12px;opacity:.8}
+main{max-width:1100px;margin:16px auto;padding:0 12px 40px}.tabs{display:flex;gap:7px;overflow:auto;padding:3px 0 12px;position:sticky;top:85px;background:var(--bg);z-index:3}
+.tab{border:1px solid var(--line);background:#fff;color:var(--green);padding:10px 13px;border-radius:12px;white-space:nowrap;font-weight:700;cursor:pointer}.tab.active{background:var(--green);color:#fff;border-color:var(--green)}
+.panel{display:none}.panel.active{display:block}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 7px #173e2910}.card h2{font-size:18px;margin:0 0 12px}.card h3{font-size:15px;margin:12px 0 8px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:5px;min-width:0}.field label{font-size:12px;color:var(--muted);font-weight:700}.field input,.field select,.field textarea{width:100%;border:1px solid #cfdad2;border-radius:10px;padding:10px 11px;font:inherit;background:#fff;color:var(--ink);min-height:42px}.field textarea{min-height:76px;resize:vertical}.full{grid-column:1/-1}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.btn{border:0;border-radius:10px;padding:11px 14px;background:var(--green);color:#fff;font-weight:750;cursor:pointer}.btn.secondary{background:var(--mint);color:var(--green);border:1px solid #c8dfd0}.btn.danger{background:#fff0f0;color:var(--red);border:1px solid #f0caca}.btn.small{padding:7px 10px;font-size:12px}.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.metric{padding:12px;background:var(--mint);border-radius:12px}.metric .k{font-size:11px;color:#52675a}.metric .v{font-size:21px;font-weight:850;color:var(--green);margin-top:2px;overflow-wrap:anywhere}.hint{color:var(--muted);font-size:12px}.status{font-weight:800;border-radius:8px;padding:4px 8px;display:inline-block}.pass{background:#e0f4e6;color:#17663a}.fail{background:#ffebeb;color:#a52c2c}.listitem{border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:9px}.listtop{display:flex;align-items:start;justify-content:space-between;gap:10px}.listtop strong{font-size:15px}.empty{padding:20px;text-align:center;color:var(--muted)}.hidden{display:none!important}.checkrow{display:flex;align-items:center;gap:8px;font-size:13px}.checkrow input{min-height:auto;width:auto}.foot{font-size:11px;color:var(--muted);text-align:center;padding:12px}
+@media(min-width:720px){.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.grid.four{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:520px){.grid{grid-template-columns:1fr 1fr;gap:9px}.card{padding:13px}.metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.metric .v{font-size:17px}.tab{padding:9px 11px;font-size:13px}.brand{font-size:18px}}
+@media print{header,.tabs,.no-print,.actions,button{display:none!important}body{background:white;font-size:11pt}.panel{display:none!important}#history.panel.active,#rkh.panel.active{display:block!important}.card{box-shadow:none;break-inside:avoid;border:1px solid #aaa}main{max-width:none;margin:0;padding:0}.listitem{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header><div class="headrow"><div><div class="brand">🌿 PQA/CPR Assistant</div><div class="sub">HTI • Planning Quality Assessment • Prototype</div></div><div class="sub" id="syncBadge">Mode lokal</div></div></header>
+<main>
+<nav class="tabs no-print">
+<button class="tab active" data-tab="input">Input PQA</button>
+<button class="tab" data-tab="history">Riwayat</button>
+<button class="tab" data-tab="cpr">CPR & Timeline</button>
+<button class="tab" data-tab="rkh">RKH & Kehadiran</button>
+<button class="tab" data-tab="settings">Pengaturan</button>
+</nav>
+
+<section class="panel active" id="input">
+<div class="card">
+<h2>Input inspeksi PQA</h2>
+<div class="grid three">
+<div class="field"><label>Tanggal inspeksi</label><input id="date" type="date"></div>
+<div class="field"><label>Sektor / Estate</label><input id="sector" value="MHS-Ketapang" placeholder="MHS-Ketapang"></div>
+<div class="field"><label>Blok / Compt</label><input id="block" placeholder="Contoh: T144"></div>
+<div class="field"><label>Luas (Ha)</label><input id="ha" type="number" min="0" step="0.01" placeholder="0.00"></div>
+<div class="field"><label>Kode kegiatan</label><select id="code">
+<option value="57-04">57-04 — WR4</option><option value="57-03">57-03 — WR3</option><option value="57-31">57-31 — Weeding 1 Manual / Slash</option><option value="57-79">57-79 — WR2 Contact</option><option value="07-02">07-02 — PPS</option><option value="07-92">07-92 — PPS Drone</option><option value="50-01">50-01 — Planting + Fertilizing</option><option value="52-01">52-01 — Blanking</option><option value="52-02">52-02 — Blanking</option><option value="54-02">54-02 — Manuring</option><option value="CUSTOM">Lainnya</option>
+</select></div>
+<div class="field"><label>Nama kegiatan</label><input id="activity" placeholder="Otomatis dari kode / bisa diubah"></div>
+<div class="field"><label>Plot (1 plot = 75 tanaman)</label><input id="plots" type="number" min="0" step="1" placeholder="0"></div>
+<div class="field"><label>Miss</label><input id="miss" type="number" min="0" step="1" value="0"></div>
+<div class="field"><label>Damage (informasi saja)</label><input id="damage" type="number" min="0" step="1" value="0"></div>
+<div class="field"><label>Poorkil (informasi saja)</label><input id="poorkil" type="number" min="0" step="1" value="0"></div>
+<div class="field"><label>Alive (tanaman)</label><input id="alive" type="number" min="0" step="1" placeholder="Jika relevan"></div>
+<div class="field"><label>Unavoidable (tanaman)</label><input id="unavoidable" type="number" min="0" step="1" value="0"></div>
+<div class="field"><label>Contractor</label><input id="contractor" placeholder="Nama kontraktor"></div>
+<div class="field"><label>Assessor</label><input id="assessor" value="Moch Fajar"></div>
+<div class="field"><label>Assisten</label><input id="assistant" placeholder="Nama asisten"></div>
+<div class="field"><label>Mandor</label><input id="mandor" placeholder="Nama mandor"></div>
+<div class="field"><label>CPR / JCOC (opsional)</label><input id="cprref" placeholder="Nomor CPR / JCOC"></div>
+<div class="field"><label>Req size / luas CPR (Ha)</label><input id="reqHa" type="number" min="0" step="0.01" placeholder="Harus sesuai CPR"></div>
+<div class="field"><label>CPR startdate</label><input id="startdate" type="date"></div>
+<div class="field"><label>CPR req date</label><input id="reqdate" type="date"></div>
+<div class="field full"><label>Remarks (isi jika FAIL / catatan)</label><textarea id="remarks" placeholder="Contoh: tanaman mati kering"></textarea></div>
+</div>
+</div>
+
+<div class="card">
+<h2>Penilaian & hasil otomatis</h2>
+<div class="hint">Ambang PASS mengikuti aturan yang disimpan untuk tiap kegiatan. Isi point penilaian 0–4; skor berbobot = jumlah (bobot × point ÷ 100). Bobot default dibagi rata dan dapat diubah.</div>
+<div class="grid three" style="margin-top:12px">
+<div class="field"><label>Boundary point (default 4)</label><select id="boundary"><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option><option value="0">0</option></select></div>
+<div class="field"><label>Timeline point (startdate → req date)</label><select id="timelinePoint"><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option><option value="0">0</option></select></div>
+<div class="field"><label>Point kegiatan / miss</label><select id="activityPoint"><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option><option value="0">0</option></select></div>
+<div class="field"><label>Bobot Boundary (%)</label><input id="wBoundary" type="number" min="0" max="100" value="25"></div>
+<div class="field"><label>Bobot Timeline (%)</label><input id="wTimeline" type="number" min="0" max="100" value="25"></div>
+<div class="field"><label>Bobot kegiatan (%)</label><input id="wActivity" type="number" min="0" max="100" value="50"></div>
+</div>
+<div class="metrics" style="margin-top:14px">
+<div class="metric"><div class="k">Alive / persentase</div><div class="v" id="alivePct">—</div></div>
+<div class="metric"><div class="k">Score</div><div class="v" id="score">—</div></div>
+<div class="metric"><div class="k">Status</div><div class="v" id="status">—</div></div>
+</div>
+<div class="hint" id="calcNote" style="margin-top:10px">Isi data untuk menghitung.</div>
+<div class="actions no-print">
+<button class="btn" id="saveBtn">Simpan inspeksi</button>
+<button class="btn secondary" id="previewBtn">Buat laporan</button>
+<button class="btn secondary" id="clearBtn">Bersihkan form</button>
+</div>
+</div>
+<div class="card hidden" id="reportCard">
+<h2>Pratinjau laporan</h2><pre id="reportText" style="white-space:pre-wrap;font:13px/1.55 ui-monospace,SFMono-Regular,monospace;margin:0"></pre>
+<div class="actions no-print"><button class="btn" id="copyReport">Salin laporan</button><button class="btn secondary" id="pdfReport">Cetak / Simpan PDF</button></div>
+</div>
+</section>
+
+<section class="panel" id="history">
+<div class="card">
+<div class="listtop"><div><h2>Riwayat inspeksi</h2><div class="hint">Tersimpan di perangkat ini; sinkronisasi online dapat diaktifkan di Pengaturan.</div></div><button class="btn secondary small no-print" id="exportCsv">Ekspor CSV</button></div>
+<div class="metrics" style="margin:12px 0"><div class="metric"><div class="k">Jumlah inspeksi</div><div class="v" id="totalRecords">0</div></div><div class="metric"><div class="k">Total luas (Ha)</div><div class="v" id="totalHa">0</div></div><div class="metric"><div class="k">PASS / FAIL</div><div class="v" id="passFail">0 / 0</div></div></div>
+<div class="grid"><div class="field"><label>Cari blok / kontraktor</label><input id="searchHistory" placeholder="Cari…"></div><div class="field"><label>Filter tanggal</label><input id="filterDate" type="date"></div></div>
+<div id="historyList"></div>
+</div>
+</section>
+
+<section class="panel" id="cpr">
+<div class="card">
+<h2>Input CPR & timeline</h2>
+<div class="grid three">
+<div class="field"><label>Nomor CPR / JCOC</label><input id="cprNo" placeholder="Nomor CPR"></div>
+<div class="field"><label>Blok / Compt</label><input id="cprBlock" placeholder="T093"></div>
+<div class="field"><label>Req size (Ha)</label><input id="cprSize" type="number" min="0" step="0.01" placeholder="Luas sesuai CPR"></div>
+<div class="field"><label>Startdate</label><input id="cprStart" type="date"></div>
+<div class="field"><label>Req date</label><input id="cprReq" type="date"></div>
+<div class="field"><label>Time complete (hari kalender)</label><input id="cprDays" readonly placeholder="Otomatis"></div>
+<div class="field full"><label>Catatan CPR</label><textarea id="cprNote" placeholder="Catatan tambahan"></textarea></div>
+</div>
+<div class="metrics" style="margin-top:12px"><div class="metric"><div class="k">Luas CPR</div><div class="v" id="cprHaView">—</div></div><div class="metric"><div class="k">Timeline</div><div class="v" id="cprTimelineView">—</div></div><div class="metric"><div class="k">Validasi</div><div class="v" id="cprValidView">—</div></div></div>
+<div class="actions no-print"><button class="btn" id="saveCpr">Simpan CPR</button><button class="btn secondary" id="copyCpr">Salin ringkasan</button></div>
+</div>
+<div class="card"><h2>Riwayat CPR</h2><div id="cprList"></div></div>
+</section>
+
+<section class="panel" id="rkh">
+<div class="card">
+<h2>Template RKH & kehadiran</h2>
+<div class="grid three">
+<div class="field"><label>Tanggal RKH</label><input id="rkhDate" type="date"></div>
+<div class="field"><label>Sektor</label><input id="rkhSector" value="MHS-Ketapang"></div>
+<div class="field"><label>Assessor / petugas</label><input id="rkhAssessor" value="Moch Fajar"></div>
+<div class="field"><label>Compt / blok</label><input id="rkhCompt" placeholder="Contoh T144"></div>
+<div class="field"><label>JCOC</label><input id="rkhJcoc" placeholder="Nomor JCOC"></div>
+<div class="field"><label>Ha</label><input id="rkhHa" type="number" step="0.01" placeholder="0.00"></div>
+<div class="field full"><label>Daftar kehadiran (satu nama per baris)</label><textarea id="attendance" placeholder="Nama petugas 1&#10;Nama petugas 2"></textarea></div>
+</div>
+<div class="actions no-print"><button class="btn" id="makeRkh">Buat template RKH</button><button class="btn secondary" id="copyRkh">Salin RKH</button><button class="btn secondary" id="pdfRkh">Cetak / Simpan PDF</button></div>
+</div>
+<div class="card hidden" id="rkhPreviewCard"><h2>Pratinjau RKH</h2><pre id="rkhPreview" style="white-space:pre-wrap;font:13px/1.55 ui-monospace,monospace;margin:0"></pre></div>
+</section>
+
+<section class="panel" id="settings">
+<div class="card">
+<h2>Aturan kegiatan</h2>
+<div class="hint">Ambang PASS yang dipakai aplikasi. Silakan cek kembali terhadap SOP terbaru perusahaan sebelum dipakai sebagai keputusan final.</div>
+<div id="thresholdList" style="margin-top:12px"></div>
+</div>
+<div class="card">
+<h2>Sinkronisasi online (Supabase)</h2>
+<p class="hint">Aplikasi langsung berjalan tanpa akun. Untuk sinkronisasi online lintas perangkat, buat project Supabase lalu isi URL dan anon/publishable key. Jangan pernah memasukkan service_role key. Data akan dikirim ke tabel yang dibuat menggunakan SQL di README.</p>
+<div class="grid">
+<div class="field"><label>Supabase Project URL</label><input id="sbUrl" placeholder="https://xxxx.supabase.co"></div>
+<div class="field"><label>Supabase anon / publishable key</label><input id="sbKey" placeholder="eyJ..."></div>
+<div class="field"><label>Workspace ID (untuk memisahkan data)</label><input id="workspace" placeholder="contoh: MHS-Ketapang"></div>
+<div class="field"><label class="checkrow"><input id="syncEnabled" type="checkbox"> Aktifkan sinkronisasi online</label><div class="hint">Butuh koneksi internet dan tabel Supabase sesuai panduan.</div></div>
+</div>
+<div class="actions no-print"><button class="btn" id="saveSettings">Simpan pengaturan</button><button class="btn secondary" id="syncNow">Sinkronkan sekarang</button><button class="btn secondary" id="downloadBackup">Unduh backup JSON</button><label class="btn secondary" for="restoreFile">Pulihkan backup JSON</label><input class="hidden" type="file" id="restoreFile" accept="application/json"></div>
+<div id="settingsMessage" class="hint" style="margin-top:10px"></div>
+</div>
+<div class="card"><h2>Catatan versi prototipe</h2><p class="hint">Versi ini menghitung PASS/FAIL berdasarkan ambang kegiatan dan menghitung skor berbobot dari point/bobot yang diinput. Detail bobot resmi per indikator dan pemetaan point miss per SOP tidak seluruhnya tersedia dalam konteks, jadi komponen penilaian disediakan agar tidak mengarang bobot perusahaan. Gunakan sebagai alat bantu dan verifikasi nilai akhir terhadap SOP/CPR sumber.</p></div>
+</section>
+<div class="foot">PQA/CPR Assistant HTI • Prototipe v1.0 • Data lokal di browser kecuali sinkronisasi online dikonfigurasi</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const today=new Date(); const iso=d=>{const x=new Date(d);return isNaN(x)?'':x.toISOString().slice(0,10)};
+$('date').value=iso(today);$('rkhDate').value=iso(today);
+const thresholds={'57-04':90,'57-03':90,'57-79':90,'57-31':95,'07-02':95,'07-92':95,'50-01':98,'52-01':98,'52-02':98,'54-02':98,'CUSTOM':95};
+const labels={'57-04':'Weeding Round 4','57-03':'Weeding Round 3','57-79':'WR2 Contact','57-31':'Weeding 1 Manual / Slash','07-02':'PPS','07-92':'PPS Drone','50-01':'Planting + Fertilizing','52-01':'Blanking','52-02':'Blanking','54-02':'Manuring','CUSTOM':'Kegiatan lainnya'};
+let records=JSON.parse(localStorage.getItem('pqa_records')||'[]');
+let cprs=JSON.parse(localStorage.getItem('pqa_cprs')||'[]');
+let rkhText='';
+let settings=JSON.parse(localStorage.getItem('pqa_settings')||'{}');
+function saveLocal(){localStorage.setItem('pqa_records',JSON.stringify(records));localStorage.setItem('pqa_cprs',JSON.stringify(cprs))}
+function val(id){return $(id).value.trim()}
+function num(id){return Number($(id).value)||0}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function fmt(n,d=2){return Number.isFinite(n)?n.toFixed(d):'—'}
+function daysBetween(a,b){if(!a||!b)return null;let x=new Date(a+'T00:00:00'),y=new Date(b+'T00:00:00');return Math.round((y-x)/86400000)}
+function getThreshold(code){return thresholds[code]??95}
+function activityName(){return val('activity')||labels[val('code')]||'Kegiatan lainnya'}
+function pctAlive(){const code=val('code'),sample=num('plots')*75,alive=num('alive'),un=num('unavoidable');if(!sample||!val('alive'))return null;let denom=sample;if(['50-01','52-01','52-02'].includes(code))denom=Math.max(0,sample-un);else if(['57-04','57-03','57-79','57-31','07-02','07-92','54-02'].includes(code))return null;return denom>0?alive/denom*100:null}
+function scoreCalc(){return (num('wBoundary')*num('boundary')+num('wTimeline')*num('timelinePoint')+num('wActivity')*num('activityPoint'))/100}
+function qualityPct(){const code=val('code'),sample=num('plots')*75,miss=num('miss');if(sample<=0)return null;if(['50-01','52-01','52-02'].includes(code)){return pctAlive()}if(['07-02','07-92'].includes(code))return Math.max(0,(sample-miss)/sample*100);if(['57-04','57-03','57-79','57-31','54-02'].includes(code))return Math.max(0,(sample-miss)/sample*100);return null}
+function statusCalc(){let p=qualityPct();if(p===null)return scoreCalc()>=3.5?'PASS':'FAIL';return p>=getThreshold(val('code'))?'PASS':'FAIL'}
+function updateCalc(){
+ const p=pctAlive(),q=qualityPct(),sc=scoreCalc(),status=statusCalc();
+ $('alivePct').textContent=p!==null?fmt(p)+'%':(q!==null?fmt(q)+'%':'—');
+ $('score').textContent=fmt(sc,2);$('status').innerHTML=`<span class="status ${status==='PASS'?'pass':'fail'}">${status}</span>`;
+ const sample=num('plots')*75,days=daysBetween(val('startdate'),val('reqdate'));
+ $('calcNote').textContent=`Sampel: ${sample} tanaman (plot × 75). Ambang ${getThreshold(val('code'))}%. Timeline: ${days===null?'tanggal CPR belum lengkap':days+' hari kalender'}. Damage dan poorkil hanya informasi, tidak dihitung ke skor.`;
+}
+function gatherRecord(){
+ const code=val('code'),sample=num('plots')*75,pct=qualityPct(),sc=scoreCalc(),st=statusCalc();
+ return {id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),date:val('date'),sector:val('sector'),block:val('block'),ha:num('ha'),code,activity:activityName(),plots:num('plots'),sample,miss:num('miss'),damage:num('damage'),poorkil:num('poorkil'),alive:num('alive'),unavoidable:num('unavoidable'),alivePct:pct,score:sc,status:st,contractor:val('contractor'),assessor:val('assessor'),assistant:val('assistant'),mandor:val('mandor'),cprref:val('cprref'),reqHa:num('reqHa'),startdate:val('startdate'),reqdate:val('reqdate'),timelineDays:daysBetween(val('startdate'),val('reqdate')),boundary:num('boundary'),timelinePoint:num('timelinePoint'),activityPoint:num('activityPoint'),wBoundary:num('wBoundary'),wTimeline:num('wTimeline'),wActivity:num('wActivity'),remarks:val('remarks')};
+}
+function makeReport(r){
+ const dateTxt=r.date?new Date(r.date+'T00:00:00').toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}):'—';
+ let out=`📅 PQA Report Sector ${r.sector} ${dateTxt}\n\n`;
+ out+=`${r.status==='PASS'?'✅':'❌'}${r.block||'—'}/${fmt(r.ha) } Ha/${r.code}/${r.activity}/${r.status}/1(${['50-01','52-01','52-02'].includes(r.code)?'T':'M'})\n`;
+ out+=`Assessor : ${r.assessor||'—'}\nContractor : ${r.contractor||'—'}\nAssisten : ${r.assistant||'—'}\nMandor : ${r.mandor||'—'}\n`;
+ if(r.alivePct!==null&&r.alivePct!==undefined)out+=`Alive / Presentase : ${fmt(r.alivePct)}%\nMortality : ${fmt(Math.max(0,100-r.alivePct))}%\n`;
+ out+=`Plot : ${r.plots} (${r.sample} tanaman)\nMiss : ${r.miss}\nDamage : ${r.damage}\n`;
+ if(r.poorkil)out+=`Poorkil : ${r.poorkil}\n`;
+ if(r.cprref)out+=`CPR / JCOC : ${r.cprref}\n`;
+ if(r.startdate||r.reqdate)out+=`Timeline CPR : ${r.startdate||'—'} sampai ${r.reqdate||'—'} (${r.timelineDays??'—'} hari)\n`;
+ out+=`Boundary Point : ${r.boundary}\nTimeline Point : ${r.timelinePoint}\nActivity Point : ${r.activityPoint}\nSCORE : ${fmt(r.score,2)}\n`;
+ if(r.status==='FAIL'&&r.remarks)out+=`Remarks : ${r.remarks}\n`;
+ return out;
+}
+function showReport(r){$('reportCard').classList.remove('hidden');$('reportText').textContent=makeReport(r);window.currentReport=makeReport(r)}
+function resetForm(){['block','ha','activity','plots','alive','contractor','assistant','mandor','cprref','reqHa','startdate','reqdate','remarks'].forEach(id=>$(id).value='');['miss','damage','poorkil','unavoidable'].forEach(id=>$(id).value='0');$('code').value='57-04';$('boundary').value='4';$('timelinePoint').value='4';$('activityPoint').value='4';$('wBoundary').value='25';$('wTimeline').value='25';$('wActivity').value='50';$('date').value=iso(new Date());updateCalc()}
+function renderHistory(){
+ const q=val('searchHistory').toLowerCase(),fd=val('filterDate');const arr=records.filter(r=>(!q||[r.block,r.contractor,r.sector,r.activity].join(' ').toLowerCase().includes(q))&&(!fd||r.date===fd));
+ $('totalRecords').textContent=records.length;$('totalHa').textContent=fmt(records.reduce((s,r)=>s+(Number(r.ha)||0),0));$('passFail').textContent=records.filter(r=>r.status==='PASS').length+' / '+records.filter(r=>r.status==='FAIL').length;
+ $('historyList').innerHTML=arr.length?arr.slice().reverse().map(r=>`<div class="listitem"><div class="listtop"><div><strong>${esc(r.block)} • ${esc(r.activity)}</strong><div class="hint">${esc(r.date)} · ${fmt(r.ha)} Ha · ${esc(r.contractor||'Tanpa kontraktor')}</div></div><span class="status ${r.status==='PASS'?'pass':'fail'}">${esc(r.status)}</span></div><div class="hint" style="margin-top:6px">Score ${fmt(r.score)} · Miss ${r.miss} · Damage ${r.damage} · Poorkil ${r.poorkil||0}</div><div class="actions no-print"><button class="btn secondary small" onclick="loadReport('${r.id}')">Laporan</button><button class="btn secondary small" onclick="editRecord('${r.id}')">Edit ke form</button><button class="btn danger small" onclick="deleteRecord('${r.id}')">Hapus</button></div></div>`).join(''):'<div class="empty">Belum ada data inspeksi.</div>';
+}
+window.loadReport=id=>{const r=records.find(x=>x.id===id);if(r){switchTab('input');showReport(r)}};
+window.editRecord=id=>{const r=records.find(x=>x.id===id);if(!r)return;switchTab('input');Object.entries(r).forEach(([k,v])=>{if($(k))$(k).value=v??''});updateCalc()};
+window.deleteRecord=id=>{if(confirm('Hapus data inspeksi ini?')){records=records.filter(x=>x.id!==id);saveLocal();renderHistory();syncIfEnabled()}};
+function switchTab(id){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===id));if(id==='history')renderHistory();if(id==='cpr')renderCprs();if(id==='settings')renderThresholds()}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
+['code','plots','miss','alive','unavoidable','boundary','timelinePoint','activityPoint','wBoundary','wTimeline','wActivity','startdate','reqdate'].forEach(id=>$(id).addEventListener('input',updateCalc));
+$('code').addEventListener('change',()=>{if(!$('activity').value)$('activity').placeholder=labels[val('code')]||'Nama kegiatan';updateCalc()});
+$('saveBtn').onclick=()=>{const r=gatherRecord();if(!r.block||!r.date){alert('Tanggal dan blok wajib diisi.');return}const ix=records.findIndex(x=>x.id===r.id);records.push(r);saveLocal();renderHistory();showReport(r);syncIfEnabled();alert('Inspeksi tersimpan di perangkat ini.')};
+$('previewBtn').onclick=()=>showReport(gatherRecord());
+$('clearBtn').onclick=()=>{if(confirm('Bersihkan semua input form?'))resetForm()};
+$('copyReport').onclick=()=>copyText($('reportText').textContent);
+$('pdfReport').onclick=()=>{document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));$('input').classList.add('active');$('reportCard').classList.remove('hidden');window.print()};
+function copyText(t){if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(()=>alert('Teks disalin.')).catch(()=>prompt('Salin teks berikut:',t));else prompt('Salin teks berikut:',t)}
+$('searchHistory').addEventListener('input',renderHistory);$('filterDate').addEventListener('input',renderHistory);
+$('exportCsv').onclick=()=>{const cols=['date','sector','block','ha','code','activity','status','score','plots','sample','miss','damage','poorkil','alivePct','contractor','assessor','assistant','mandor','cprref','startdate','reqdate','timelineDays','remarks'];const csv=[cols.join(','),...records.map(r=>cols.map(k=>`"${String(r[k]??'').replace(/"/g,'""')}"`).join(','))].join('\r\n');download('pqa-riwayat.csv',csv,'text/csv;charset=utf-8')};
+function download(name,data,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500)}
+// CPR
+function cprCalc(){let d=daysBetween(val('cprStart'),val('cprReq'));$('cprDays').value=d===null?'':d;$('cprHaView').textContent=val('cprSize')?fmt(num('cprSize'))+' Ha':'—';$('cprTimelineView').textContent=d===null?'—':d+' hari';$('cprValidView').textContent=d===null?'Lengkapi tanggal':d<0?'Tanggal tidak valid':'OK';$('cprValidView').style.color=d!==null&&d<0?'#a52c2c':'#174d38'}
+['cprStart','cprReq','cprSize'].forEach(id=>$(id).addEventListener('input',cprCalc));
+function cprObj(){return {id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),no:val('cprNo'),block:val('cprBlock'),ha:num('cprSize'),start:val('cprStart'),req:val('cprReq'),days:daysBetween(val('cprStart'),val('cprReq')),note:val('cprNote'),workspace:val('workspace')}}
+$('saveCpr').onclick=()=>{const c=cprObj();if(!c.block||!c.start||!c.req){alert('Blok, startdate, dan req date wajib diisi.');return}if(c.days<0){alert('Req date tidak boleh sebelum startdate.');return}cprs.push(c);localStorage.setItem('pqa_cprs',JSON.stringify(cprs));renderCprs();syncIfEnabled();alert('CPR tersimpan.')};
+$('copyCpr').onclick=()=>{const c=cprObj();copyText(`CPR / JCOC: ${c.no||'—'}\nCompt: ${c.block}\nHa (sesuai req size): ${fmt(c.ha)}\nStartdate: ${c.start}\nReq date: ${c.req}\nTime complete: ${c.days??'—'} hari\nCatatan: ${c.note||'—'}`)};
+function renderCprs(){$('cprList').innerHTML=cprs.length?cprs.slice().reverse().map(c=>`<div class="listitem"><strong>${esc(c.block)} • ${esc(c.no||'CPR')}</strong><div class="hint">${esc(c.start)} → ${esc(c.req)} · ${fmt(c.ha)} Ha · ${c.days} hari</div><div class="actions no-print"><button class="btn danger small" onclick="deleteCpr('${c.id}')">Hapus</button></div></div>`).join(''):'<div class="empty">Belum ada data CPR.</div>'}
+window.deleteCpr=id=>{if(confirm('Hapus data CPR?')){cprs=cprs.filter(c=>c.id!==id);localStorage.setItem('pqa_cprs',JSON.stringify(cprs));renderCprs();syncIfEnabled()}};
+function makeRkh(){let date=val('rkhDate'),d=date?new Date(date+'T00:00:00').toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}):'—';let names=val('attendance').split('\n').map(s=>s.trim()).filter(Boolean);rkhText=`Kehadiran & RKH PQA Sektor ${val('rkhSector')||'—'} ${d}\n\nCompt // JCOC // Ha\n${val('rkhCompt')||'—'} // ${val('rkhJcoc')||'—'} // ${val('rkhHa')||'—'} Ha\n\nPetugas: ${val('rkhAssessor')||'—'}\n\nDaftar Kehadiran:\n${names.length?names.map((n,i)=>`${i+1}. ${n}`).join('\n'):'(belum diisi)'}\n`; $('rkhPreview').textContent=rkhText;$('rkhPreviewCard').classList.remove('hidden')}
+$('makeRkh').onclick=makeRkh;$('copyRkh').onclick=()=>{if(!rkhText)makeRkh();copyText(rkhText)};$('pdfRkh').onclick=()=>{if(!rkhText)makeRkh();document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));$('rkh').classList.add('active');window.print()};
+// Thresholds
+function renderThresholds(){$('thresholdList').innerHTML=Object.entries(thresholds).map(([c,p])=>`<div class="listitem" style="display:flex;justify-content:space-between;gap:12px"><span><strong>${esc(c)}</strong> · ${esc(labels[c])}</span><strong>${p}%</strong></div>`).join('')}
+// Settings and online sync
+function loadSettings(){ $('sbUrl').value=settings.url||'';$('sbKey').value=settings.key||'';$('workspace').value=settings.workspace||'MHS-Ketapang';$('syncEnabled').checked=!!settings.enabled;updateSyncBadge()}
+function saveSettings(){settings={url:val('sbUrl').replace(/\/$/,''),key:val('sbKey'),workspace:val('workspace')||'default',enabled:$('syncEnabled').checked};localStorage.setItem('pqa_settings',JSON.stringify(settings));$('settingsMessage').textContent='Pengaturan tersimpan di browser ini.';updateSyncBadge()}
+function updateSyncBadge(){$('syncBadge').textContent=settings.enabled?'Online sync aktif':'Mode lokal'}
+$('saveSettings').onclick=saveSettings;
+async function supaRequest(table,method='GET',body=null){if(!settings.url||!settings.key)throw Error('Isi URL dan anon key Supabase di Pengaturan.');const url=settings.url+'/rest/v1/'+table+(method==='GET'?'?workspace=eq.'+encodeURIComponent(settings.workspace||'default'):'?on_conflict=workspace,id');const res=await fetch(url,{method,headers:{'apikey':settings.key,'Authorization':'Bearer '+settings.key,'Content-Type':'application/json','Prefer':method==='POST'?'resolution=merge-duplicates,return=minimal':'return=minimal'},body:body?JSON.stringify(body):undefined});if(!res.ok)throw Error('Supabase '+res.status+': '+(await res.text()).slice(0,220));return res}
+async function syncNow(){saveSettings();if(!settings.enabled){$('settingsMessage').textContent='Aktifkan checkbox sinkronisasi online dahulu.';return}try{$('settingsMessage').textContent='Menyinkronkan…';const payload=records.map(r=>({id:r.id,workspace:settings.workspace||'default',kind:'pqa',record:r,updated_at:new Date().toISOString()})).concat(cprs.map(c=>({id:c.id,workspace:settings.workspace||'default',kind:'cpr',record:c,updated_at:new Date().toISOString()})));if(payload.length)await supaRequest('pqa_sync','POST',payload);$('settingsMessage').textContent=`Sinkronisasi selesai: ${payload.length} data dikirim. Data online tidak otomatis diunduh ke perangkat lain pada versi ini; gunakan ekspor/backup untuk pemindahan data.`}catch(e){$('settingsMessage').textContent='Sinkronisasi gagal: '+e.message}}
+function syncIfEnabled(){if(settings.enabled)syncNow()}
+$('syncNow').onclick=syncNow;
+$('downloadBackup').onclick=()=>download('pqa-backup.json',JSON.stringify({records,cprs,settings:{...settings,key:undefined}},null,2),'application/json');
+$('restoreFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());if(!Array.isArray(d.records)||!Array.isArray(d.cprs))throw Error('Format backup tidak sesuai');if(!confirm(`Pulihkan ${d.records.length} inspeksi dan ${d.cprs.length} CPR? Data lokal saat ini akan digabung.`))return;const ids=new Set(records.map(x=>x.id));records.push(...d.records.filter(x=>!ids.has(x.id)));const cids=new Set(cprs.map(x=>x.id));cprs.push(...d.cprs.filter(x=>!cids.has(x.id)));saveLocal();localStorage.setItem('pqa_cprs',JSON.stringify(cprs));renderHistory();renderCprs();$('settingsMessage').textContent='Backup berhasil digabung.'}catch(err){alert('Gagal memulihkan backup: '+err.message)}e.target.value=''};
+loadSettings();renderHistory();renderCprs();renderThresholds();updateCalc();cprCalc();
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
+</script>
+</body></html>
